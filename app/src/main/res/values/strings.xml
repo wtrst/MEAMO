@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">MEAMO</string>
+    <string name="category">Category</string>
+    <string name="name">Name</string>
+    <string name="rest_name_hint">Enter a name of restaurant.</string>
+    <string name="whole_rate">%1$d</string>
+    <string name="food">Food</string>
+    <string name="drink">Drink</string>
+    <string name="cp">CP</string>
+    <string name="service">Service</string>
+    <string name="atmspr">Atmosphere</string>
+    <string name="location_label">Location</string>
+    <string name="rest_adrs_hint">Enter an address of restaurant.</string>
+    <string name="memo_label">Memo</string>
+    <string name="date_label">Last Visit</string>
+    <string name="photo_label">Photo</string>
+    <string name="date_picker_title">Last visit date</string>
+    <string name="new_restaurant">New Restaurant</string>
+    <string-array name="list">
+        <item> </item>
+        <item>Breakfast</item>
+        <item>Lunch</item>
+        <item>Dinner</item>
+        <item>Cafe</item>
+        <item>Bar</item>
+        <item>Fast Food</item>
+        <item>Other</item>
+    </string-array>
+</resources>

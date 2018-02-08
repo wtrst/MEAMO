@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/meamo_res_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restaurant Name"/>
+
+    <TextView
+        android:id="@+id/meamo_res_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Restaurant Address"/>
+
+    <TextView
+        android:id="@+id/meamo_last_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Last Visit Date"/>
+
+</LinearLayout>
