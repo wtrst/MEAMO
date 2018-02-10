@@ -90,6 +90,14 @@ public class MeamoLab {
                 new String[] {uuidString});
     }
 
+    public void deleteMeamo(Meamo meamo){
+        String uuidString = meamo.getId().toString();
+
+        mDatabase.delete(MeamoDbSchema.MeamoTable.NAME,
+                MeamoDbSchema.MeamoTable.Cols.UUID + " = ?",
+                new String[] {uuidString});
+    }
+
     private MeamoCursorWrapper queryMeamos(String whereClause, String[] whereArgs){
         Cursor cursor = mDatabase.query(
                 MeamoDbSchema.MeamoTable.NAME,
@@ -107,6 +115,7 @@ public class MeamoLab {
     private static ContentValues getContentValues(Meamo meamo){
         ContentValues values = new ContentValues();
         values.put(MeamoDbSchema.MeamoTable.Cols.UUID, meamo.getId().toString());
+        values.put(MeamoDbSchema.MeamoTable.Cols.CATEGORY_ID, meamo.getCategoryId());
         values.put(MeamoDbSchema.MeamoTable.Cols.CATEGORY, meamo.getCategory());
         values.put(MeamoDbSchema.MeamoTable.Cols.RESTAURANT_NAME, meamo.getName());
         values.put(MeamoDbSchema.MeamoTable.Cols.RATE, meamo.getWholeRating());

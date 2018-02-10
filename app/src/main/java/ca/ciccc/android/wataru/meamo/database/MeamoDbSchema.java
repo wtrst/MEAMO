@@ -10,6 +10,7 @@ public class MeamoDbSchema {
 
         public static final class Cols {
             public static final String UUID = "uuid";
+            public static final String CATEGORY_ID = "category_id";
             public static final String CATEGORY = "category";
             public static final String RESTAURANT_NAME = "restaurant_name";
             public static final String RATE = "rate";

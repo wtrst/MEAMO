@@ -10,6 +10,7 @@ import java.util.UUID;
 public class Meamo {
     private UUID mId;
     private String mName;
+    private int mCategoryId;
     private String mCategory;
     private float mWholeRating;
     private int mFoodRating;
@@ -42,8 +43,15 @@ public class Meamo {
         this.mName = mName;
     }
 
+    public int getCategoryId() {
+        return mCategoryId;
+    }
 
-    public String getCategory() {
+    public void setCategoryId(int mCategoryId) {
+        this.mCategoryId = mCategoryId;
+    }
+
+    public String getCategory(){
         return mCategory;
     }
 
@@ -51,14 +59,13 @@ public class Meamo {
         this.mCategory = mCategory;
     }
 
-
     public float getWholeRating() {
         return mWholeRating;
     }
 
     public void setWholeRating(int food, int drink, int cp, int service, int atmosphere) {
 
-        this.mWholeRating = ((float)food + (float)drink + (float)cp + (float)service + (float)atmosphere) / 5;
+        this.mWholeRating = ((float) food + (float) drink + (float) cp + (float) service + (float) atmosphere) / 5;
     }
 
     public int getFoodRating() {

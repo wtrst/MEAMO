@@ -19,9 +19,9 @@ public class MeamoCursorWrapper extends CursorWrapper {
 
     public Meamo getMeamo(){
         String uuidString = getString(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.UUID));
+        int categoryId = getInt(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.CATEGORY_ID));
         String category = getString(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.CATEGORY));
         String name = getString(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.RESTAURANT_NAME));
-        float rateWhole = getFloat(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.RATE));
         int rateFood = getInt(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.RATE_FOOD));
         int rateDrink = getInt(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.RATE_DRINK));
         int rateCp = getInt(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.RATE_CP));
@@ -32,6 +32,7 @@ public class MeamoCursorWrapper extends CursorWrapper {
         long date =  getLong(getColumnIndex(MeamoDbSchema.MeamoTable.Cols.LAST_VISIT_DATE));
 
         Meamo meamo = new Meamo(UUID.fromString(uuidString));
+        meamo.setCategoryId(categoryId);
         meamo.setCategory(category);
         meamo.setName(name);
         meamo.setWholeRating(rateFood, rateDrink, rateCp, rateService, rateAtmosphere);

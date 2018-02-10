@@ -12,10 +12,13 @@
     <string name="location_label">Location</string>
     <string name="rest_adrs_hint">Enter an address of restaurant.</string>
     <string name="memo_label">Memo</string>
+    <string name="memo_hint">Enter your memo</string>
     <string name="date_label">Last Visit</string>
     <string name="photo_label">Photo</string>
     <string name="date_picker_title">Last visit date</string>
     <string name="new_restaurant">New Restaurant</string>
+    <string name="delete_restaurant">Delete</string>
+    <string name="spinnerprompt">Category</string>
     <string-array name="list">
         <item> </item>
         <item>Breakfast</item>

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,13 +16,19 @@ import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.util.Date;
@@ -41,6 +48,7 @@ public class MeamoFragment extends Fragment {
 
     private Meamo mMeamo;
     private File mPhotoFile;
+    private Spinner mCategory;
     private EditText mNameField;
     private EditText mAddressField;
     private Button mDateButton;
@@ -50,6 +58,7 @@ public class MeamoFragment extends Fragment {
     private RatingBar mRBarService;
     private RatingBar mRBarAtmosphere;
     private RatingBar mRBarWhole;
+    private EditText mMemo;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
 
@@ -68,6 +77,8 @@ public class MeamoFragment extends Fragment {
         UUID meamoId = (UUID) getArguments().getSerializable(ARG_RESTAURANT_ID);
         mMeamo = MeamoLab.get(getActivity()).getMeamo(meamoId);
         mPhotoFile = MeamoLab.get(getActivity()).getPhotoFile(mMeamo);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -80,6 +91,22 @@ public class MeamoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_meamo, container, false);
+
+        mCategory = (Spinner) v.findViewById(R.id.rest_category);
+        mCategory.setSelection(mMeamo.getCategoryId());
+        mCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mMeamo.setCategoryId(mCategory.getSelectedItemPosition());
+                mMeamo.setCategory(mCategory.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         mNameField = (EditText) v.findViewById(R.id.rest_name);
         mNameField.setText(mMeamo.getName());
@@ -131,8 +158,6 @@ public class MeamoFragment extends Fragment {
             }
         });
 
-        mRBarWhole = (RatingBar) v.findViewById(R.id.ratingBar);
-        updateWholeRating(mRBarWhole);
 
         mRBarFood = (RatingBar) v.findViewById(R.id.ratingBar_food);
         mRBarFood.setRating((float) mMeamo.getFoodRating());
@@ -185,12 +210,32 @@ public class MeamoFragment extends Fragment {
         });
 
 
+        mRBarWhole = (RatingBar) v.findViewById(R.id.ratingBar);
+        mRBarWhole.setRating(mMeamo.getWholeRating());
+
+        mMemo = (EditText) v.findViewById(R.id.memo);
+        mMemo.setText(mMeamo.getMemo());
+        mMemo.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mMeamo.setMemo(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
 
         PackageManager packageManager = getActivity().getPackageManager();
-//        if(packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null){
-//
-//        }
 
         mPhotoButton = (ImageButton) v.findViewById(R.id.meamo_camera);
         final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -244,15 +289,34 @@ public class MeamoFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_meamo, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.delete_restaurant:
+                MeamoLab.get(getActivity()).deleteMeamo(mMeamo);
+                getActivity().finish();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void updateDate() {
         mDateButton.setText(mMeamo.getDate().toString());
     }
 
     private void updateWholeRating(RatingBar mRBarWhole) {
-
         mMeamo.setWholeRating(mMeamo.getFoodRating(), mMeamo.getDrinkRating(),
                 mMeamo.getCpRating(), mMeamo.getServRating(), mMeamo.getAtmRating());
-        getString(R.string.whole_rate, mRBarWhole.getRating());
+
+        mRBarWhole.setRating(mMeamo.getWholeRating());
     }
 
     private void updatePhotoView() {

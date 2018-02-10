@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class MeamoListFragment extends Fragment {
     private MeamoAdapter mAdapter;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -48,14 +51,14 @@ public class MeamoListFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_meamo_list, menu);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.new_restaurant:
                 Meamo meamo = new Meamo();
                 MeamoLab.get(getActivity()).addMeamo(meamo);
@@ -86,12 +89,17 @@ public class MeamoListFragment extends Fragment {
         private TextView mNameTextView;
         private TextView mAddressTextView;
         private TextView mDateTextView;
+        private TextView mCategory;
+        private RatingBar mRate;
+
 
         public void bind(Meamo meamo) {
             mMeamo = meamo;
             mNameTextView.setText(mMeamo.getName());
             mAddressTextView.setText(mMeamo.getAddress());
-            mDateTextView.setText(mMeamo.getDate().toString());
+            mDateTextView.setText(DateFormat.format("MMM dd, yyyy", mMeamo.getDate()));
+            mCategory.setText(mMeamo.getCategory());
+            mRate.setRating(mMeamo.getWholeRating());
         }
 
         public MeamoHolder(LayoutInflater inflater, ViewGroup parent) {
@@ -101,6 +109,8 @@ public class MeamoListFragment extends Fragment {
             mNameTextView = (TextView) itemView.findViewById(R.id.meamo_res_name);
             mAddressTextView = (TextView) itemView.findViewById(R.id.meamo_res_address);
             mDateTextView = (TextView) itemView.findViewById(R.id.meamo_last_date);
+            mCategory = (TextView) itemView.findViewById(R.id.meamo_res_category);
+            mRate = (RatingBar) itemView.findViewById(R.id.meamo_res_rate);
         }
 
         @Override
@@ -135,7 +145,7 @@ public class MeamoListFragment extends Fragment {
             return mMeamos.size();
         }
 
-        public void setMeamos(List<Meamo> meamos){
+        public void setMeamos(List<Meamo> meamos) {
             mMeamos = meamos;
         }
     }

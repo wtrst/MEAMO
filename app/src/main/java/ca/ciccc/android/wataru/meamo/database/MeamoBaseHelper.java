@@ -24,6 +24,7 @@ public class MeamoBaseHelper extends SQLiteOpenHelper {
         db.execSQL("create table " + MeamoTable.NAME + "(" +
                 " _id integer primary key autoincrement, " +
                 MeamoTable.Cols.UUID + ", " +
+                MeamoTable.Cols.CATEGORY_ID + ", " +
                 MeamoTable.Cols.CATEGORY + ", " +
                 MeamoTable.Cols.RESTAURANT_NAME + ", " +
                 MeamoTable.Cols.RATE + ", " +
