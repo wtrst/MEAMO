@@ -201,11 +201,26 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/rest_address"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="@string/rest_adrs_hint" />
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/rest_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/rest_adrs_hint" />
+
+
+                <ImageButton
+                    android:id="@+id/meamo_map"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_meamo_map"
+                    android:elevation="0dp" />
+
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -225,8 +240,8 @@
                 android:id="@+id/memo"
                 android:layout_width="wrap_content"
                 android:layout_height="150dp"
-                android:hint="@string/memo_hint"
                 android:background="@null"
+                android:hint="@string/memo_hint"
                 android:inputType="textMultiLine"
                 android:lines="6"
                 android:overScrollMode="always"

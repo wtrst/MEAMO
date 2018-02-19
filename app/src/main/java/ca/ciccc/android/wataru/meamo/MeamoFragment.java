@@ -51,6 +51,7 @@ public class MeamoFragment extends Fragment {
     private Spinner mCategory;
     private EditText mNameField;
     private EditText mAddressField;
+    private ImageButton mMapButton;
     private Button mDateButton;
     private RatingBar mRBarFood;
     private RatingBar mRBarDrink;
@@ -229,6 +230,17 @@ public class MeamoFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+
+        mMapButton = (ImageButton) v.findViewById(R.id.meamo_map);
+        mMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MeamoMapActivity.class);
+                intent.putExtra("location", mMeamo.getAddress());
+                startActivity(intent);
             }
         });
 
