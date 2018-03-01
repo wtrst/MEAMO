@@ -23,8 +23,11 @@ import java.util.List;
  */
 
 public class MeamoListFragment extends Fragment {
+    private static final String ARG_ITEM_ID = "item_id";
+
     private RecyclerView mMeamoRecyclerView;
     private MeamoAdapter mAdapter;
+    private int mMenuItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,9 @@ public class MeamoListFragment extends Fragment {
             case R.id.new_restaurant:
                 Meamo meamo = new Meamo();
                 MeamoLab.get(getActivity()).addMeamo(meamo);
-                Intent intent = MeamoPagerActivity.newIntent(getActivity(), meamo.getId());
+                mMenuItem = item.getItemId();
+                Intent intent = MeamoPagerActivity.newIntent(getActivity(), meamo.getId(), mMenuItem);
+//                intent.putExtra(ARG_ITEM_ID, item.getItemId());
                 startActivity(intent);
                 return true;
             default:
@@ -115,7 +120,7 @@ public class MeamoListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = MeamoPagerActivity.newIntent(getActivity(), mMeamo.getId());
+            Intent intent = MeamoPagerActivity.newIntent(getActivity(), mMeamo.getId(), mMenuItem);
             startActivity(intent);
         }
     }

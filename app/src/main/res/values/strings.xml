@@ -18,6 +18,7 @@
     <string name="date_picker_title">Last visit date</string>
     <string name="new_restaurant">New Restaurant</string>
     <string name="delete_restaurant">Delete</string>
+    <string name="edit_restaurant">Edit</string>
     <string name="spinnerprompt">Category</string>
     <string-array name="list">
         <item> </item>
@@ -29,4 +30,5 @@
         <item>Fast Food</item>
         <item>Other</item>
     </string-array>
+    <string name="title_activity_meamo_maps">Map</string>
 </resources>
