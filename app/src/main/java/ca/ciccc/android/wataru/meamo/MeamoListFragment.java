@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.List;
@@ -67,7 +66,6 @@ public class MeamoListFragment extends Fragment {
                 MeamoLab.get(getActivity()).addMeamo(meamo);
                 mMenuItem = item.getItemId();
                 Intent intent = MeamoPagerActivity.newIntent(getActivity(), meamo.getId(), mMenuItem);
-//                intent.putExtra(ARG_ITEM_ID, item.getItemId());
                 startActivity(intent);
                 return true;
             default:

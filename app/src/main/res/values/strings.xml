@@ -19,6 +19,7 @@
     <string name="new_restaurant">New Restaurant</string>
     <string name="delete_restaurant">Delete</string>
     <string name="edit_restaurant">Edit</string>
+    <string name="done">Done</string>
     <string name="spinnerprompt">Category</string>
     <string-array name="list">
         <item> </item>
@@ -31,4 +32,8 @@
         <item>Other</item>
     </string-array>
     <string name="title_activity_meamo_maps">Map</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core
+        functionality.</string>
+    <string name="permission_rationale">Location permission is needed for core functionality</string>
+    <string name="settings">Settings</string>
 </resources>

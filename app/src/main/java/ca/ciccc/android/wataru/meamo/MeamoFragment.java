@@ -76,8 +76,6 @@ public class MeamoFragment extends Fragment {
         UUID meamoId = (UUID) getArguments().getSerializable(ARG_RESTAURANT_ID);
         mMeamo = MeamoLab.get(getActivity()).getMeamo(meamoId);
         mPhotoFile = MeamoLab.get(getActivity()).getPhotoFile(mMeamo);
-
-        setHasOptionsMenu(true);
     }
 
     @Override
@@ -299,24 +297,6 @@ public class MeamoFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_meamo_reference, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
-            case R.id.delete_restaurant:
-                MeamoLab.get(getActivity()).deleteMeamo(mMeamo);
-                getActivity().finish();
-
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     private void updateDate() {
         mDateButton.setText(mMeamo.getDate().toString());

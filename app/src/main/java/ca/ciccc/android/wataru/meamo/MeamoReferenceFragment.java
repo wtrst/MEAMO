@@ -1,6 +1,7 @@
 package ca.ciccc.android.wataru.meamo;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -127,6 +128,7 @@ public class MeamoReferenceFragment extends Fragment {
 
 
         mPhotoView = (ImageView) v.findViewById(R.id.meamo_photo_ref);
+        updatePhotoView();
 
 
         return v;
@@ -136,6 +138,15 @@ public class MeamoReferenceFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater){
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_meamo_reference, menu);
+    }
+
+    private void updatePhotoView() {
+        if (mPhotoFile == null || !mPhotoFile.exists()) {
+            mPhotoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            mPhotoView.setImageBitmap(bitmap);
+        }
     }
 
     @Override
@@ -151,8 +162,9 @@ public class MeamoReferenceFragment extends Fragment {
 
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.meamo_vp_content, meamoFragment);
-//                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.detach(MeamoReferenceFragment.this);
+                fragmentTransaction.add(R.id.meamo_vp_container, meamoFragment);
+                fragmentTransaction.show(meamoFragment);
                 fragmentTransaction.commit();
                 return true;
             default:
