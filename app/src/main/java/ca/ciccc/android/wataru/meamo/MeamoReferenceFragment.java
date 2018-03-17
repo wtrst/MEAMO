@@ -28,6 +28,7 @@ public class MeamoReferenceFragment extends Fragment {
     private static final String ARG_RESTAURANT_ID = "restaurant_id";
 
     private Meamo mMeamo;
+    private UUID mMeamoId;
     private File mPhotoFile;
     private TextView mCategory;
     private TextView mNameField;
@@ -67,6 +68,13 @@ public class MeamoReferenceFragment extends Fragment {
         super.onPause();
 
         MeamoLab.get(getActivity()).updateMeamo(mMeamo);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateAddress();
     }
 
     @Override
@@ -120,8 +128,9 @@ public class MeamoReferenceFragment extends Fragment {
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeamoMapsActivity.class);
-                intent.putExtra("location", mMeamo.getAddress());
+//                Intent intent = new Intent(getActivity(), MeamoMapsActivity.class);
+//                intent.putExtra("location", mMeamo.getAddress());
+                Intent intent = MeamoMapsActivity.newIntent(getActivity(), mMeamoId,0);
                 startActivity(intent);
             }
         });
@@ -149,16 +158,23 @@ public class MeamoReferenceFragment extends Fragment {
         }
     }
 
+    private void updateAddress() {
+        mAddressField.setText(mMeamo.getAddress());
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
-        switch (item.getItemId()){
+
+        int menuItem = item.getItemId();
+
+        switch (menuItem){
             case R.id.delete_restaurant:
                 MeamoLab.get(getActivity()).deleteMeamo(mMeamo);
                 getActivity().finish();
 
                 return true;
             case R.id.edit_restaurant:
-                MeamoFragment meamoFragment = MeamoFragment.newInstance(mMeamo.getId());
+                MeamoFragment meamoFragment = MeamoFragment.newInstance(mMeamo.getId(), menuItem);
 
                 FragmentManager fragmentManager = getFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

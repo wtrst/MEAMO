@@ -44,11 +44,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
-public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCallback{
+public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
 
     private static final String TAG = MeamoMapsActivity.class.getSimpleName();
@@ -57,7 +59,14 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
     private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
     private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
             UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+    public static final String EXTRA_ADDRESS = "address";
 
+    private static final String EXTRA_RESTAURANT_ID = "meamoid";
+    private static final String EXTRA_FRAGMENT = "fragment";
+
+    private static final int REQUEST_ADDRESS = 4;
+
+    private UUID mMeamoId;
     private FusedLocationProviderClient mFusedLocationClient;
     private SettingsClient mSettingsClient;
     private LocationRequest mLocationRequest;
@@ -69,27 +78,26 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
     private Geocoder mGeocoder;
     private List<Address> mAddressList;
     private UiSettings mUiSettings;
-    private Bundle mExtras;
     private String mTextAddress;
-    private Location mTextLocation;
+    private String mTextAddressPin;
+    private int mCallFrom;
 
+
+
+    public static Intent newIntent(Context packageContext, UUID meamoId, int callFragment) {
+        Intent intent = new Intent(packageContext, MeamoMapsActivity.class);
+        intent.putExtra(EXTRA_RESTAURANT_ID, meamoId);
+        intent.putExtra(EXTRA_FRAGMENT, callFragment);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meamo_maps);
 
-//        if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                mTextAddress= null;
-            } else {
-                mTextAddress= extras.getString("location");
-                setTextAddress();
-            }
-//        } else {
-//            mTextAddress= (String) savedInstanceState.getSerializable("location");
-//        }
+        mMeamoId = (UUID) getIntent().getSerializableExtra(EXTRA_RESTAURANT_ID);
+        mCallFrom = (int) getIntent().getSerializableExtra(EXTRA_FRAGMENT);
 
         mRequestingLocationUpdates = false;
 
@@ -188,43 +196,49 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
-    private void onMapLongClick(){
+    private void onMapLongClick() {
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng longpushLocation) {
                 LatLng newlocation = new LatLng(longpushLocation.latitude, longpushLocation.longitude);
                 List<Address> mAddressList = getAddressList(newlocation);
+                mTextAddressPin = "" + mAddressList.get(0).getAddressLine(0) +
+                        " " + mAddressList.get(0).getLocality() +
+                        " " + mAddressList.get(0).getAdminArea() +
+                        " " + mAddressList.get(0).getPostalCode();
                 mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(newlocation).title(
-                        ""+mAddressList.get(0).getAddressLine(0)+
-                                " " + mAddressList.get(0).getLocality()+
-                                " " + mAddressList.get(0).getAdminArea()+
-                                " " + mAddressList.get(0).getPostalCode()
-                ));
+                mMap.addMarker(new MarkerOptions().position(newlocation).title(mTextAddressPin));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newlocation, 15.0f));
+
+                Intent intent = MeamoPagerActivity.newIntent(MeamoMapsActivity.this, mMeamoId, mCallFrom);
+                intent.putExtra(EXTRA_ADDRESS, mTextAddressPin);
+                startActivity(intent);
+
+//                sendResult(-1, mTextAddressPin);
             }
         });
+
     }
 
-    private void setTextAddress(){
-        if (!(mTextAddress.equals(""))){
+
+    private void setTextAddress() {
+        if (!(mTextAddress.equals(""))) {
             Geocoder coder = new Geocoder(getApplicationContext());
             List<Address> geoResult = null;
 
             try {
                 geoResult = coder.getFromLocationName("SFO Airport", 5);
 
-                if (geoResult != null && geoResult.size() > 0){
+                if (geoResult != null && geoResult.size() > 0) {
                     Address location = geoResult.get(0);
                     location.getLatitude();
                     location.getLongitude();
 
-                    LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude() );
+                    LatLng newLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
                     mMap.addMarker(new MarkerOptions().position(newLocation));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 15.0f));
                 }
-
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -232,7 +246,7 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-    private List<Address> getAddressList(LatLng longpushLocation){
+    private List<Address> getAddressList(LatLng longpushLocation) {
         mGeocoder = new Geocoder(this, Locale.CANADA.getDefault());
         try {
             mAddressList = mGeocoder.getFromLocation(longpushLocation.latitude, longpushLocation.longitude, 1);
@@ -241,6 +255,16 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
         }
 
         return mAddressList;
+    }
+
+    private void sendResult(int resultCode, String address) {
+
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_ADDRESS, address);
+
+        MeamoFragment meamoFragment = new MeamoFragment();
+//        meamoFragment.startActivity(intent);
+        meamoFragment.onActivityResult(REQUEST_ADDRESS, resultCode, intent);
     }
 
     private void stopLocationUpdates() {
@@ -409,7 +433,6 @@ public class MeamoMapsActivity extends FragmentActivity implements OnMapReadyCal
                     REQUEST_PERMISSIONS_REQUEST_CODE);
         }
     }
-
 
 
 }

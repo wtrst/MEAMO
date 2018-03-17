@@ -21,9 +21,12 @@ public class MeamoPagerActivity extends AppCompatActivity {
 
     private static final String EXTRA_RESTAURANT_ID = "com.ciccc.android.meamo.restaurant_id";
     private static final String ARG_ITEM_ID = "item_id";
+    public static final String EXTRA_ADDRESS = "address";
 
     private ViewPager mViewPager;
     private List<Meamo> mMeamos;
+    private String mTextAddressPin = null;
+    private int mMenuItem;
 
     public static Intent newIntent(Context packageContext, UUID meamoId, int item) {
         Intent intent = new Intent(packageContext, MeamoPagerActivity.class);
@@ -38,22 +41,36 @@ public class MeamoPagerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_meamo_pager);
 
         UUID meamoId = (UUID) getIntent().getSerializableExtra(EXTRA_RESTAURANT_ID);
+        mMenuItem = (int) getIntent().getSerializableExtra(ARG_ITEM_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.meamo_view_pager);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras.getString(EXTRA_ADDRESS) == null) {
+            mTextAddressPin = null;
+        } else {
+            mTextAddressPin = extras.getString(EXTRA_ADDRESS);
+            extras.remove(EXTRA_ADDRESS);
+        }
 
         mMeamos = MeamoLab.get(this).getMeamos();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override
             public Fragment getItem(int position) {
-                int menuItem = (int) getIntent().getSerializableExtra(ARG_ITEM_ID);
+
                 Meamo meamo = mMeamos.get(position);
 
-                if (menuItem == R.id.new_restaurant){
-                    return MeamoFragment.newInstance(meamo.getId());
-                }else{
+                if (mMenuItem == R.id.new_restaurant|| mMenuItem == R.id.edit_restaurant) {
+                    if (mTextAddressPin == null) {
+                        return MeamoFragment.newInstance(meamo.getId(), mMenuItem);
+                    } else {
+                        return MeamoFragment.newInstance(meamo.getId(), mMenuItem, mTextAddressPin);
+                    }
+                } else if(mMenuItem != R.id.new_restaurant && mMenuItem != R.id.edit_restaurant){
                     return MeamoReferenceFragment.newInstance(meamo.getId());
                 }
+                return null;
             }
 
             @Override
@@ -61,6 +78,7 @@ public class MeamoPagerActivity extends AppCompatActivity {
                 return mMeamos.size();
             }
         });
+
 
         for (int i = 0; i < mMeamos.size(); i++) {
             if (mMeamos.get(i).getId().equals(meamoId)) {
@@ -70,4 +88,5 @@ public class MeamoPagerActivity extends AppCompatActivity {
         }
 
     }
+
 }

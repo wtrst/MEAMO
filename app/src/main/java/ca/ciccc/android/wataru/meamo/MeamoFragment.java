@@ -15,9 +15,6 @@ import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -39,11 +36,15 @@ import java.util.UUID;
 
 public class MeamoFragment extends Fragment {
     private static final String ARG_RESTAURANT_ID = "restaurant_id";
+    private static final String ARG_ITEM_ID = "item_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static String mTextAddressPin;
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_PHOTO = 2;
 
+    private UUID mMeamoId;
+    private int mMenuId;
     private Meamo mMeamo;
     private File mPhotoFile;
     private Spinner mCategory;
@@ -61,9 +62,23 @@ public class MeamoFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
 
-    public static MeamoFragment newInstance(UUID meamoId) {
+
+    public static MeamoFragment newInstance(UUID meamoId, int menuId) {
+        mTextAddressPin = null;
         Bundle args = new Bundle();
         args.putSerializable(ARG_RESTAURANT_ID, meamoId);
+        args.putSerializable(ARG_ITEM_ID, menuId);
+
+        MeamoFragment fragment = new MeamoFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    public static MeamoFragment newInstance(UUID meamoId, int menuId, String textAddressPin) {
+        mTextAddressPin = textAddressPin;
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_RESTAURANT_ID, meamoId);
+        args.putSerializable(ARG_ITEM_ID, menuId);
 
         MeamoFragment fragment = new MeamoFragment();
         fragment.setArguments(args);
@@ -73,14 +88,26 @@ public class MeamoFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UUID meamoId = (UUID) getArguments().getSerializable(ARG_RESTAURANT_ID);
-        mMeamo = MeamoLab.get(getActivity()).getMeamo(meamoId);
+        mMeamoId = (UUID) getArguments().getSerializable(ARG_RESTAURANT_ID);
+//        if (getArguments().getSerializable(ARG_ITEM_ID) != null){
+            mMenuId = (int) getArguments().getSerializable(ARG_ITEM_ID);
+//        }
+        mMeamo = MeamoLab.get(getActivity()).getMeamo(mMeamoId);
         mPhotoFile = MeamoLab.get(getActivity()).getPhotoFile(mMeamo);
     }
+
 
     @Override
     public void onPause() {
         super.onPause();
+
+        MeamoLab.get(getActivity()).updateMeamo(mMeamo);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         MeamoLab.get(getActivity()).updateMeamo(mMeamo);
     }
@@ -125,6 +152,9 @@ public class MeamoFragment extends Fragment {
         });
 
         mAddressField = (EditText) v.findViewById(R.id.rest_address);
+        if (mTextAddressPin != null){
+            mMeamo.setAddress(mTextAddressPin);
+        }
         mAddressField.setText(mMeamo.getAddress());
         mAddressField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -234,8 +264,7 @@ public class MeamoFragment extends Fragment {
         mMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MeamoMapsActivity.class);
-                intent.putExtra("location", mMeamo.getAddress());
+                Intent intent = MeamoMapsActivity.newIntent(getActivity(), mMeamoId, mMenuId);
                 startActivity(intent);
             }
         });
@@ -279,13 +308,13 @@ public class MeamoFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent date) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
         }
 
         if (requestCode == REQUEST_DATE) {
-            Date date1 = (Date) date.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            Date date1 = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mMeamo.setDate(date1);
             updateDate();
         } else if (requestCode == REQUEST_PHOTO) {
