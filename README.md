@@ -16,7 +16,7 @@ You can make a memo about the restaurant with:
 
 ***DEMO:***
 
-![Demo](https://github.com/wtrst/LR/blob/media/LR_howToPlay.gif)
+![Demo](https://github.com/wtrst/MEAMO/blob/image/meamo1.gif)(https://github.com/wtrst/MEAMO/blob/image/meamo2.gif)
 
 ## Author
 
